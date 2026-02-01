@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Political Dating</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&family=Boogaloo&family=Bangers&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --republican-red: #E31C23;
+            --republican-dark: #B22222;
+            --democrat-blue: #0015BC;
+            --democrat-dark: #000080;
+            --gold: #D4AF37;
+            --cream: #FDF5E6;
+            --charcoal: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            color: var(--cream);
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Landing Page */
+        #landing {
+            background-image: url('ChatGPT Image Jan 31, 2026 at 05_40_22 PM.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .landing-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 8rem;
+            font-weight: 700;
+            text-align: center;
+            color: #ffffff;
+            -webkit-text-fill-color: #ffffff;
+            -webkit-text-stroke: 3px #C41E3A;
+            paint-order: stroke fill;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            margin-bottom: 15px;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .create-account-box {
+            background: transparent;
+            padding: 15px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #ffffff;
+        }
+
+        .create-account-box:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.3);
+        }
+
+        .create-account-box span {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Party Selection */
+        .party-container {
+            display: flex;
+            flex-direction: row;
+            gap: 60px;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .party-container::after {
+            display: none;
+        }
+
+        .party-card {
+            width: 500px;
+            height: 400px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            border: 4px solid #ffffff;
+        }
+
+        .party-card::before {
+            display: none;
+        }
+
+        .party-card h2 {
+            position: relative;
+            z-index: 2;
+        }
+
+        .party-card .party-icon {
+            position: relative;
+            z-index: 2;
+        }
+
+        .party-card.republican {
+            background-image: url('images-2.jpeg');
+            box-shadow: 0 10px 40px rgba(196, 30, 58, 0.4);
+        }
+
+        .party-card.democrat {
+            background-image: url('images-3.jpeg');
+            box-shadow: 0 10px 40px rgba(0, 21, 188, 0.4);
+        }
+
+        .party-card:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .party-card h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            -webkit-text-stroke: 1.5px #ffffff;
+            paint-order: stroke fill;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .party-card.republican h2 {
+            color: #E31C23;
+            font-size: 1.4rem;
+        }
+
+        .party-card.democrat h2 {
+            color: #0015BC;
+        }
+
+        .party-icon {
+            display: none;
+        }
+
+        /* Questions Page */
+        .questions-container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+        }
+
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .option-btn {
+            padding: 6px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            color: white;
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.85rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .option-btn.selected {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--charcoal);
+            font-weight: 600;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            background: linear-gradient(135deg, var(--gold), #B8960C);
+            border: none;
+            border-radius: 10px;
+            color: var(--charcoal);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .continue-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Birthday Page */
+        .birthday-input {
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            font-family: 'Crimson Pro', serif;
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            margin: 30px 0;
+        }
+
+        .birthday-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Tinder-style Feed */
+        #feed {
+            background: #808080;
+        }
+
+        .feed-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            padding-top: 70px;
+        }
+
+        .profile-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.8) 100%);
+            border-radius: 20px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #000000;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2a2a4a, #1a1a2e);
+        }
+
+        .profile-placeholder span {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+        }
+
+        .profile-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+
+        .profile-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-info .party-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .party-badge.republican {
+            background: var(--republican-red);
+        }
+
+        .party-badge.democrat {
+            background: var(--democrat-blue);
+        }
+
+        .radical-score {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        .swipe-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .swipe-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .swipe-btn.pass {
+            background: linear-gradient(135deg, #ff4757, #c0392b);
+            color: white;
+        }
+
+        .swipe-btn.like {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .swipe-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .toggle-side-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 12px 18px;
+            background: #000000;
+            border: 3px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .toggle-side-btn:hover {
+            background: var(--gold);
+            color: #000000;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-btn span {
+            font-size: 0.75rem;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .nav-btn.active, .nav-btn:hover {
+            color: var(--gold);
+        }
+
+        /* Profile Page */
+        .user-profile {
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Profile page backgrounds based on party */
+        #profile.republican-profile {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #profile.republican-profile::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background-image: url('ChatGPT Image Jan 31, 2026 at 06_52_34 PM.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        #profile.republican-profile > .user-profile {
+            position: relative;
+            z-index: 1;
+        }
+
+        #profile.republican-profile > .bottom-nav {
+            position: fixed;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        #profile.republican-profile .bottom-nav .nav-btn {
+            color: rgba(255, 255, 255, 0.5);
+            -webkit-text-stroke: 0;
+            font-weight: 400;
+            font-size: 1.5rem;
+        }
+
+        #profile.republican-profile .bottom-nav .nav-btn span {
+            color: rgba(255, 255, 255, 0.5);
+            -webkit-text-stroke: 0;
+            font-weight: 400;
+            font-size: 0.75rem;
+        }
+
+        #profile.republican-profile .bottom-nav .nav-btn.active,
+        #profile.republican-profile .bottom-nav .nav-btn.active span {
+            color: var(--gold);
+        }
+
+        #profile.republican-profile .profile-name-input {
+            color: #D5212E;
+            -webkit-text-stroke: 1px #000000;
+            paint-order: stroke fill;
+            font-weight: 900;
+            font-size: 2.5rem;
+        }
+
+        #profile.republican-profile .stat-label {
+            color: #333333;
+            font-weight: 700;
+            font-size: 1.1rem;
+            -webkit-text-stroke: 0;
+        }
+
+        #profile.republican-profile .stat-value {
+            color: #D5212E;
+            font-weight: 900;
+            font-size: 1.1rem;
+            -webkit-text-stroke: 0;
+        }
+
+        #profile.republican-profile .edit-profile-btn {
+            color: #D5212E;
+            font-weight: 700;
+            -webkit-text-stroke: 0;
+        }
+
+        #profile.republican-profile .profile-name-input {
+            border-bottom-color: #D5212E;
+        }
+
+        #profile.republican-profile .edit-profile-btn {
+            border-color: #D5212E;
+        }
+
+
+        #profile.democrat-profile {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #profile.democrat-profile::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background-image: url('ChatGPT Image Jan 31, 2026 at 06_52_51 PM.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        #profile.democrat-profile > .user-profile {
+            position: relative;
+            z-index: 1;
+        }
+
+        #profile.democrat-profile > .bottom-nav {
+            position: fixed;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        #profile.democrat-profile .bottom-nav .nav-btn {
+            color: rgba(255, 255, 255, 0.5);
+            -webkit-text-stroke: 0;
+            font-weight: 400;
+            font-size: 1.5rem;
+        }
+
+        #profile.democrat-profile .bottom-nav .nav-btn span {
+            color: rgba(255, 255, 255, 0.5);
+            -webkit-text-stroke: 0;
+            font-weight: 400;
+            font-size: 0.75rem;
+        }
+
+        #profile.democrat-profile .bottom-nav .nav-btn.active,
+        #profile.democrat-profile .bottom-nav .nav-btn.active span {
+            color: var(--gold);
+        }
+
+        #profile.democrat-profile .profile-name-input {
+            color: #0015BC;
+            -webkit-text-stroke: 1px #000000;
+            paint-order: stroke fill;
+            font-weight: 900;
+            font-size: 2.5rem;
+            border-bottom-color: #0015BC;
+        }
+
+        #profile.democrat-profile .stat-label {
+            color: #333333;
+            font-weight: 700;
+            font-size: 1.1rem;
+            -webkit-text-stroke: 0;
+        }
+
+        #profile.democrat-profile .stat-value {
+            color: #0015BC;
+            font-weight: 900;
+            font-size: 1.1rem;
+            -webkit-text-stroke: 0;
+        }
+
+        #profile.democrat-profile .edit-profile-btn {
+            color: #0015BC;
+            border-color: #0015BC;
+            font-weight: 700;
+            -webkit-text-stroke: 0;
+        }
+
+        .user-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            object-fit: cover;
+            margin: 0 auto 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .avatar-container:hover .avatar-overlay {
+            opacity: 1;
+        }
+
+        .avatar-upload-input {
+            display: none;
+        }
+
+        .user-stats {
+            background: transparent;
+            padding: 10px 0;
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            border: none;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #333333;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #000000;
+        }
+
+        .edit-profile-btn {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .profile-name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--gold);
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            text-align: center;
+            width: 80%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .profile-name-input:focus {
+            outline: none;
+            border-bottom-color: #ffffff;
+        }
+
+        .profile-name-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .edit-profile-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-profile-btn:hover {
+            background: var(--gold);
+            color: var(--charcoal);
+        }
+
+        .stat-value.editable {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-value.editable:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            width: 120px;
+        }
+
+        .stat-input:focus {
+            outline: none;
+            border-color: #ffffff;
+        }
+
+        /* Chat Page */
+        .chat-container {
+            max-width: 500px;
+            width: 100%;
+            padding-top: 10px;
+        }
+
+        .chat-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .chat-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: #ffffff;
+            font-weight: 700;
+            -webkit-text-stroke: 1px #000000;
+            paint-order: stroke fill;
+        }
+
+        .matches-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .match-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .match-item.republican-match {
+            background: #D5212E;
+        }
+
+        .match-item.democrat-match {
+            background: #0015BC;
+        }
+
+        .match-item:hover {
+            opacity: 0.9;
+            transform: translateX(5px);
+        }
+
+        .match-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid white;
+            object-fit: cover;
+        }
+
+        .match-info {
+            flex: 1;
+        }
+
+        .match-info h4 {
+            margin-bottom: 3px;
+            color: white;
+        }
+
+        .match-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .no-matches {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            padding: 50px;
+        }
+
+        /* Individual Chat Conversation */
+        .conversation-container {
+            max-width: 500px;
+            width: 100%;
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversation-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .conversation-header .back-btn {
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .conversation-header .chat-partner-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .conversation-header .chat-partner-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 1rem;
+            line-height: 1.4;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: var(--gold);
+            border: none;
+            border-radius: 25px;
+            color: var(--charcoal);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-limit-msg {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            font-style: italic;
+        }
+
+        /* Conversation page party styling */
+        #conversation.republican-conversation {
+            background: #D5212E;
+        }
+
+        #conversation.republican-conversation .send-btn {
+            background: #8B0000;
+            color: white;
+        }
+
+        #conversation.republican-conversation .conversation-header {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #conversation.republican-conversation .chat-input-container {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        #conversation.democrat-conversation {
+            background: #0015BC;
+        }
+
+        #conversation.democrat-conversation .send-btn {
+            background: #000080;
+            color: white;
+        }
+
+        #conversation.democrat-conversation .conversation-header {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #conversation.democrat-conversation .chat-input-container {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #party-select .section-title {
+            font-family: 'Bangers', cursive;
+            font-size: 4rem;
+            color: #ffffff;
+            -webkit-text-stroke: 3px #E31C23;
+            paint-order: stroke fill;
+            margin-bottom: 5px;
+            margin-top: -100px;
+            text-shadow: 4px 4px 0px #000000, 6px 6px 0px rgba(0,0,0,0.3);
+            letter-spacing: 4px;
+            transform: rotate(-2deg);
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        #party-select .page-subtitle {
+            color: #ffffff;
+            font-size: 1.5rem;
+            -webkit-text-stroke: 1.5px #000000;
+            paint-order: stroke fill;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #party-select {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #party-select::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background-image: url('The-meaning-of-the-colors-red-white-and-blue-on-the-American-flag.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            z-index: 0;
+        }
+
+        #party-select > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Republican Questions Page */
+        #republican-questions {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #republican-questions::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background-image: url('barron trump.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(12px);
+            z-index: 0;
+        }
+
+        #republican-questions > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        #republican-questions .section-title {
+            color: #D5212E;
+            -webkit-text-stroke: 2px #000000;
+            paint-order: stroke fill;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #republican-questions .question-card h3 {
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        #republican-questions .option-btn {
+            color: #000000;
+            border: 4px solid #D5212E;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 3px 0 #8B0000;
+        }
+
+        #republican-questions .option-btn:hover {
+            background: rgba(213, 33, 46, 0.2);
+            transform: translateY(-2px);
+        }
+
+        #republican-questions .option-btn.selected {
+            background: #D5212E;
+            color: #ffffff;
+            border-color: #8B0000;
+        }
+
+        #republican-questions .continue-btn {
+            background: #D5212E;
+            color: #000000;
+            border: 4px solid #8B0000;
+            box-shadow: 0 4px 0 #5C0000;
+        }
+
+        #republican-questions .continue-btn:hover {
+            background: #B01C26;
+            box-shadow: 0 6px 0 #5C0000;
+            transform: translateY(-2px);
+        }
+
+        /* Democrat Questions Page */
+        #democrat-questions {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #democrat-questions::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background-image: url('hunter biden.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(12px);
+            z-index: 0;
+        }
+
+        #democrat-questions > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        #democrat-questions .section-title {
+            color: #0015BC;
+            -webkit-text-stroke: 2px #000000;
+            paint-order: stroke fill;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #democrat-questions .question-card h3 {
+            color: #000000;
+        }
+
+        #democrat-questions .option-btn {
+            color: #000000;
+            border: 3px solid #0015BC;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        #democrat-questions .option-btn:hover {
+            background: rgba(0, 21, 188, 0.2);
+        }
+
+        #democrat-questions .option-btn.selected {
+            background: #0015BC;
+            color: #ffffff;
+        }
+
+        #democrat-questions .continue-btn {
+            background: #0015BC;
+            color: #000000;
+        }
+
+        #democrat-questions .continue-btn:hover {
+            background: #000d8a;
+            box-shadow: 0 10px 30px rgba(0, 21, 188, 0.5);
+        }
+
+        /* Radical Score Display */
+        .radical-display {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .radical-display h3 {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--gold);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .radical-number {
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .radical-label {
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .landing-title {
+                font-size: 2.5rem;
+            }
+
+            .party-container {
+                flex-direction: row;
+                gap: 30px;
+            }
+
+            .party-card {
+                width: 280px;
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div class="page active" id="landing">
+        <h1 class="landing-title">Political Dating</h1>
+        <div class="create-account-box" onclick="goToPage('party-select')">
+            <span>Create Your Account</span>
+        </div>
+    </div>
+
+    <!-- Party Selection Page -->
+    <div class="page" id="party-select">
+        <h2 class="section-title">Choose Your Party</h2>
+        <p class="page-subtitle">This will determine your dating experience</p>
+        <div class="party-container">
+            <div class="party-card republican" onclick="selectParty('republican')">
+                <div class="party-icon">🐘</div>
+                <h2>Republican</h2>
+            </div>
+            <div class="party-card democrat" onclick="selectParty('democrat')">
+                <div class="party-icon">🫏</div>
+                <h2>Democrat</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Republican Questions Page -->
+    <div class="page" id="republican-questions">
+        <h2 class="section-title">Your Political Views</h2>
+        <div class="questions-container">
+            <div class="question-card">
+                <h3>Do you mess with ICE?</h3>
+                <div class="options-container">
+                    <button class="option-btn" onclick="selectOption(this, 'ice')">Yes</button>
+                    <button class="option-btn" onclick="selectOption(this, 'ice')">No</button>
+                </div>
+            </div>
+            <div class="question-card">
+                <h3>Did Trump <em>really</em> win the 2020 election?</h3>
+                <div class="options-container">
+                    <button class="option-btn" onclick="selectOption(this, 'trump2020')">Yes</button>
+                    <button class="option-btn" onclick="selectOption(this, 'trump2020')">No</button>
+                </div>
+            </div>
+            <div class="question-card">
+                <h3>Candace Owens or Ben Shapiro?</h3>
+                <div class="options-container">
+                    <button class="option-btn" onclick="selectOption(this, 'candace')">Candace</button>
+                    <button class="option-btn" onclick="selectOption(this, 'candace')">Ben</button>
+                </div>
+            </div>
+            <button class="continue-btn" id="rep-continue" onclick="calculateRadicalScore()" disabled>Calculate Radicality Score</button>
+        </div>
+    </div>
+
+    <!-- Democrat Questions Page -->
+    <div class="page" id="democrat-questions">
+        <h2 class="section-title">Your Political Views</h2>
+        <div class="questions-container">
+            <div class="question-card">
+                <h3>What color hair are you running?</h3>
+                <div class="options-container">
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Brown</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Blonde</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Black</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Red</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Ginger</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Blue</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Green</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Purple</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Pink</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Orange</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Teal</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Rainbow</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Silver</button>
+                    <button class="option-btn" onclick="selectOption(this, 'hair')">Other</button>
+                </div>
+            </div>
+            <div class="question-card">
+                <h3>Illegal immigration?</h3>
+                <div class="options-container">
+                    <button class="option-btn" onclick="selectOption(this, 'immigration')">F*** ICE</button>
+                    <button class="option-btn" onclick="selectOption(this, 'immigration')">Let's go Brandon</button>
+                </div>
+            </div>
+            <div class="question-card">
+                <h3>Kamala Harris for pres 2028?</h3>
+                <div class="options-container">
+                    <button class="option-btn" onclick="selectOption(this, 'kamala')">Yes</button>
+                    <button class="option-btn" onclick="selectOption(this, 'kamala')">No</button>
+                </div>
+            </div>
+            <button class="continue-btn" id="dem-continue" onclick="calculateRadicalScore()" disabled>Calculate Radicality Score</button>
+        </div>
+    </div>
+
+    <!-- Radical Score Display -->
+    <div class="page" id="radical-display">
+        <h2 class="section-title">Your Radicality Score</h2>
+        <div class="radical-display">
+            <h3>Based on your answers...</h3>
+            <div class="radical-number" id="radical-score-display">0</div>
+            <p class="radical-label">out of 1000</p>
+        </div>
+        <p class="page-subtitle" id="radical-message"></p>
+        <button class="continue-btn" style="max-width: 400px;" onclick="goToPage('birthday')">Continue</button>
+    </div>
+
+    <!-- Birthday Page -->
+    <div class="page" id="birthday">
+        <h2 class="section-title">Your Birthday</h2>
+        <p class="page-subtitle">We need to verify your age</p>
+        <input type="date" class="birthday-input" id="birthday-input" onchange="checkBirthday()">
+        <button class="continue-btn" id="birthday-continue" style="max-width: 400px;" onclick="goToPage('feed')" disabled>Continue</button>
+    </div>
+
+    <!-- Main Feed Page -->
+    <div class="page" id="feed" style="padding-bottom: 100px;">
+        <div class="feed-container">
+            <button class="toggle-side-btn" onclick="toggleOtherSide()">
+                Try out the other side 👅
+            </button>
+            <div class="profile-card">
+                <img id="feed-profile-image" class="profile-image" src="" alt="Profile">
+                <div class="profile-placeholder" id="feed-placeholder">
+                    <span>Profile images coming soon...</span>
+                </div>
+                <div class="profile-info">
+                    <h3 id="feed-name">Alex, 28</h3>
+                    <span class="party-badge" id="feed-party-badge">Democrat</span>
+                    <p class="radical-score">Radical Score: <span id="feed-radical">650</span></p>
+                </div>
+            </div>
+            <div class="swipe-buttons">
+                <button class="swipe-btn pass" onclick="swipeProfile('pass')">✕</button>
+                <button class="swipe-btn like" onclick="swipeProfile('like')">♥</button>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="goToPage('feed')">
+                🔥
+                <span>Feed</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('chat')">
+                💬
+                <span>Chat</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('profile')">
+                👤
+                <span>Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div class="page" id="profile" style="padding-bottom: 100px;">
+        <div class="user-profile">
+            <div class="avatar-container">
+                <img id="user-avatar-img" class="user-avatar" src="" alt="Your Profile" onclick="document.getElementById('avatar-upload').click()">
+                <span class="avatar-overlay">📷 Change Photo</span>
+                <input type="file" id="avatar-upload" class="avatar-upload-input" accept="image/*" onchange="handleAvatarUpload(event)">
+            </div>
+            <input type="text" id="profile-name" class="profile-name-input" placeholder="Your Name" value="">
+            <div class="user-stats">
+                <div class="stat-row">
+                    <span class="stat-label">Party</span>
+                    <span class="stat-value" id="profile-party-value"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Radical Score</span>
+                    <span class="stat-value" id="profile-radical"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Birthday</span>
+                    <span class="stat-value" id="profile-birthday"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Viewing</span>
+                    <span class="stat-value" id="profile-viewing"></span>
+                </div>
+                <button class="edit-profile-btn" onclick="toggleEditMode()">✏️ Edit Profile</button>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="goToPage('feed')">
+                🔥
+                <span>Feed</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('chat')">
+                💬
+                <span>Chat</span>
+            </button>
+            <button class="nav-btn active" onclick="goToPage('profile')">
+                👤
+                <span>Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Page -->
+    <div class="page" id="chat" style="padding-bottom: 100px; justify-content: flex-start; padding-top: 30px;">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>Your Matches</h2>
+            </div>
+            <div class="matches-list" id="matches-list">
+                <div class="no-matches">
+                    <p>No matches yet!</p>
+                    <p style="margin-top: 10px;">Start swiping to find your political soulmate 💕</p>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="goToPage('feed')">
+                🔥
+                <span>Feed</span>
+            </button>
+            <button class="nav-btn active" onclick="goToPage('chat')">
+                💬
+                <span>Chat</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('profile')">
+                👤
+                <span>Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Individual Conversation Page -->
+    <div class="page" id="conversation" style="padding-bottom: 100px;">
+        <div class="conversation-container">
+            <div class="conversation-header">
+                <button class="back-btn" onclick="goToPage('chat')">←</button>
+                <div class="chat-partner-avatar" id="conv-avatar"></div>
+                <span class="chat-partner-name" id="conv-name"></span>
+            </div>
+            <div class="messages-container" id="messages-container">
+                <!-- Messages will be added here -->
+            </div>
+            <div class="chat-input-container" id="chat-input-area">
+                <input type="text" class="chat-input" id="message-input" placeholder="Type a message...">
+                <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="goToPage('feed')">
+                🔥
+                <span>Feed</span>
+            </button>
+            <button class="nav-btn active" onclick="goToPage('chat')">
+                💬
+                <span>Chat</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('profile')">
+                👤
+                <span>Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // User data storage
+        let userData = {
+            name: '',
+            party: null,
+            answers: {},
+            radicalScore: 0,
+            birthday: null,
+            viewingOtherSide: false,
+            matches: []
+        };
+
+        // Sample profiles for feed
+        const republicanProfiles = [
+            { name: "Chad", age: 31, radical: 667, image: "average repbulican 1.jpeg" },
+            { name: "Marcus", age: 29, radical: 420, image: "averaeg repbulican 2.jpeg" },
+            { name: "Nikki", age: 34, radical: 669, image: "averaeg republican 3.jpeg" },
+            { name: "Brittany", age: 28, radical: 67, image: "averaeg republican 4.jpeg" }
+        ];
+
+        const democratProfiles = [
+            { name: "Oliver", age: 28, radical: 669, image: "average democrat 1.jpeg" },
+            { name: "Ethan", age: 32, radical: 667, image: "average democrat 2.jpeg" },
+            { name: "Kevin", age: 30, radical: 420, image: "average democrat 3.jpeg" },
+            { name: "Marcus", age: 27, radical: 67, image: "average democrat 4.jpeg" }
+        ];
+
+        let currentProfileIndex = 0;
+
+        // Navigation
+        function goToPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            if (pageId === 'feed' || pageId === 'profile' || pageId === 'chat') {
+                updateNavButtons(pageId);
+            }
+            
+            if (pageId === 'profile') {
+                updateProfilePage();
+            }
+            
+            if (pageId === 'feed') {
+                updateFeedProfile();
+            }
+            
+            if (pageId === 'chat') {
+                // Apply party styling to chat page
+                const chatPage = document.getElementById('chat');
+                chatPage.classList.remove('republican-chat', 'democrat-chat');
+                if (userData.party === 'republican') {
+                    chatPage.classList.add('republican-chat');
+                } else if (userData.party === 'democrat') {
+                    chatPage.classList.add('democrat-chat');
+                }
+            }
+        }
+
+        function updateNavButtons(activePageId) {
+            document.querySelectorAll('.bottom-nav .nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+
+        // Party selection
+        function selectParty(party) {
+            userData.party = party;
+            if (party === 'republican') {
+                goToPage('republican-questions');
+            } else {
+                goToPage('democrat-questions');
+            }
+        }
+
+        // Option selection
+        function selectOption(button, question) {
+            // Remove selected from siblings
+            const siblings = button.parentElement.querySelectorAll('.option-btn');
+            siblings.forEach(s => s.classList.remove('selected'));
+            
+            // Add selected to clicked button
+            button.classList.add('selected');
+            
+            // Store answer
+            userData.answers[question] = button.textContent;
+            
+            // Check if all questions answered
+            checkQuestionsComplete();
+        }
+
+        function checkQuestionsComplete() {
+            if (userData.party === 'republican') {
+                const allAnswered = userData.answers.ice && userData.answers.trump2020 && userData.answers.candace;
+                document.getElementById('rep-continue').disabled = !allAnswered;
+            } else {
+                const allAnswered = userData.answers.hair && userData.answers.immigration && userData.answers.kamala;
+                document.getElementById('dem-continue').disabled = !allAnswered;
+            }
+        }
+
+        // Radical score calculation
+        function calculateRadicalScore() {
+            let rawScore = 0;
+            
+            if (userData.party === 'republican') {
+                // Republican scoring - more "radical" answers get higher scores
+                if (userData.answers.ice === 'Yes') rawScore += 2;
+                if (userData.answers.trump2020 === 'Yes') rawScore += 3;
+                if (userData.answers.candace === 'Candace') rawScore += 2;
+                if (userData.answers.candace === 'Ben') rawScore += 1;
+            } else {
+                // Democrat scoring
+                // Hair color scoring - more unusual = more radical
+                const hairScores = {
+                    'Brown': 0,
+                    'Blonde': 0,
+                    'Black': 0,
+                    'Red': 1,
+                    'Ginger': 1,
+                    'Blue': 3,
+                    'Green': 3,
+                    'Purple': 3,
+                    'Pink': 3,
+                    'Orange': 2,
+                    'Teal': 3,
+                    'Rainbow': 4,
+                    'Silver': 1,
+                    'Other': 2
+                };
+                rawScore += hairScores[userData.answers.hair] || 0;
+                
+                if (userData.answers.immigration === 'F*** ICE') rawScore += 4;
+                if (userData.answers.immigration === "Let's go Brandon") rawScore += 1;
+                if (userData.answers.kamala === 'Yes') rawScore += 2;
+            }
+            
+            // Map raw scores to the four possible scores
+            const coolScores = [67, 420, 667, 669];
+            
+            // rawScore ranges from 0-8+, map to coolScores index
+            let scoreIndex;
+            if (rawScore <= 2) {
+                scoreIndex = 0; // 67
+            } else if (rawScore <= 4) {
+                scoreIndex = 1; // 420
+            } else if (rawScore <= 6) {
+                scoreIndex = 2; // 667
+            } else {
+                scoreIndex = 3; // 669
+            }
+            let score = coolScores[scoreIndex];
+            
+            userData.radicalScore = score;
+            
+            // Display score with animation
+            displayRadicalScore(score);
+        }
+
+        function displayRadicalScore(score) {
+            goToPage('radical-display');
+            
+            const display = document.getElementById('radical-score-display');
+            const message = document.getElementById('radical-message');
+            
+            // Animate the number
+            let current = 0;
+            const duration = 2000;
+            const increment = score / (duration / 16);
+            
+            const animate = () => {
+                current += increment;
+                if (current < score) {
+                    display.textContent = Math.floor(current);
+                    requestAnimationFrame(animate);
+                } else {
+                    display.textContent = score;
+                }
+            };
+            animate();
+            
+            // Set message based on party
+            if (userData.party === 'democrat') {
+                message.textContent = "IMPEACH THE ORANGE MAN";
+                message.style.color = "#0015BC";
+            } else {
+                message.textContent = "TRUMP FOR A THIRD TERM";
+                message.style.color = "#E31C23";
+            }
+            message.style.fontSize = "2.5rem";
+            message.style.fontFamily = "'Bangers', cursive";
+            message.style.fontWeight = "700";
+            message.style.textShadow = "3px 3px 0px #000000";
+            message.style.letterSpacing = "2px";
+        }
+
+        // Birthday check
+        function checkBirthday() {
+            const input = document.getElementById('birthday-input');
+            if (input.value) {
+                userData.birthday = input.value;
+                document.getElementById('birthday-continue').disabled = false;
+            }
+        }
+
+        // Feed functions
+        function updateFeedProfile() {
+            const profiles = userData.viewingOtherSide 
+                ? (userData.party === 'republican' ? democratProfiles : republicanProfiles)
+                : (userData.party === 'republican' ? republicanProfiles : democratProfiles);
+            
+            if (currentProfileIndex >= profiles.length) {
+                currentProfileIndex = 0;
+            }
+            
+            const profile = profiles[currentProfileIndex];
+            const displayParty = userData.viewingOtherSide 
+                ? (userData.party === 'republican' ? 'Democrat' : 'Republican')
+                : (userData.party === 'republican' ? 'Republican' : 'Democrat');
+            
+            document.getElementById('feed-name').textContent = `${profile.name}, ${profile.age}`;
+            document.getElementById('feed-radical').textContent = profile.radical;
+            
+            const badge = document.getElementById('feed-party-badge');
+            badge.textContent = displayParty;
+            badge.className = 'party-badge ' + displayParty.toLowerCase();
+            
+            // Set profile image for feed
+            const profileImage = document.getElementById('feed-profile-image');
+            const placeholder = document.getElementById('feed-placeholder');
+            if (profile.image) {
+                profileImage.src = profile.image;
+                profileImage.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                profileImage.style.display = 'none';
+                placeholder.style.display = 'flex';
+            }
+        }
+
+        function swipeProfile(action) {
+            const profiles = userData.viewingOtherSide 
+                ? (userData.party === 'republican' ? democratProfiles : republicanProfiles)
+                : (userData.party === 'republican' ? republicanProfiles : democratProfiles);
+            
+            if (action === 'like') {
+                // Add to matches
+                const profile = profiles[currentProfileIndex];
+                const displayParty = userData.viewingOtherSide 
+                    ? (userData.party === 'republican' ? 'Democrat' : 'Republican')
+                    : (userData.party === 'republican' ? 'Republican' : 'Democrat');
+                
+                userData.matches.push({
+                    name: profile.name,
+                    age: profile.age,
+                    radical: profile.radical,
+                    image: profile.image,
+                    party: displayParty
+                });
+                updateMatchesList();
+            }
+            
+            currentProfileIndex++;
+            updateFeedProfile();
+        }
+
+        function toggleOtherSide() {
+            userData.viewingOtherSide = !userData.viewingOtherSide;
+            currentProfileIndex = 0;
+            updateFeedProfile();
+            
+            const btn = document.querySelector('.toggle-side-btn');
+            if (userData.viewingOtherSide) {
+                btn.textContent = 'Back to your side 🔄';
+                btn.style.background = 'var(--gold)';
+                btn.style.color = 'var(--charcoal)';
+            } else {
+                btn.textContent = 'Try out the other side 👅';
+                btn.style.background = 'rgba(0, 0, 0, 0.7)';
+                btn.style.color = 'var(--gold)';
+            }
+        }
+
+        // Profile page
+        let isEditMode = false;
+
+        function updateProfilePage() {
+            document.getElementById('profile-party-value').textContent = userData.party 
+                ? userData.party.charAt(0).toUpperCase() + userData.party.slice(1)
+                : 'Not set';
+            document.getElementById('profile-radical').textContent = userData.radicalScore + ' / 1000';
+            document.getElementById('profile-birthday').textContent = userData.birthday || 'Not set';
+            document.getElementById('profile-viewing').textContent = userData.viewingOtherSide 
+                ? 'The Other Side' 
+                : 'Your Party';
+            
+            // Set name if exists
+            if (userData.name) {
+                document.getElementById('profile-name').value = userData.name;
+            }
+            
+            // Set profile avatar based on custom upload or party default
+            const avatar = document.getElementById('user-avatar-img');
+            if (userData.customAvatar) {
+                avatar.src = userData.customAvatar;
+            } else if (userData.party === 'democrat') {
+                avatar.src = 'biden_face_crop.png';
+            } else if (userData.party === 'republican') {
+                avatar.src = 'licensed-image.jpeg';
+            }
+
+            // Set profile page background based on party
+            const profilePage = document.getElementById('profile');
+            profilePage.classList.remove('republican-profile', 'democrat-profile');
+            if (userData.party === 'republican') {
+                profilePage.classList.add('republican-profile');
+            } else if (userData.party === 'democrat') {
+                profilePage.classList.add('democrat-profile');
+            }
+        }
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const btn = document.querySelector('.edit-profile-btn');
+            const statValues = document.querySelectorAll('.stat-value');
+            
+            if (isEditMode) {
+                btn.textContent = '💾 Save Profile';
+                btn.style.background = 'var(--gold)';
+                btn.style.color = 'var(--charcoal)';
+                
+                // Make fields editable
+                statValues.forEach(val => {
+                    const currentValue = val.textContent;
+                    const fieldId = val.id;
+                    val.innerHTML = `<input type="text" class="stat-input" id="${fieldId}-input" value="${currentValue}">`;
+                });
+            } else {
+                btn.textContent = '✏️ Edit Profile';
+                btn.style.background = 'transparent';
+                btn.style.color = 'var(--gold)';
+                
+                // Save values
+                const partyInput = document.getElementById('profile-party-value-input');
+                const radicalInput = document.getElementById('profile-radical-input');
+                const birthdayInput = document.getElementById('profile-birthday-input');
+                const viewingInput = document.getElementById('profile-viewing-input');
+                
+                if (partyInput) {
+                    const newParty = partyInput.value.toLowerCase();
+                    if (newParty === 'republican' || newParty === 'democrat') {
+                        userData.party = newParty;
+                    }
+                }
+                if (radicalInput) {
+                    const score = parseInt(radicalInput.value);
+                    if (!isNaN(score)) {
+                        userData.radicalScore = score;
+                    }
+                }
+                if (birthdayInput) {
+                    userData.birthday = birthdayInput.value;
+                }
+                
+                // Save name
+                const nameInput = document.getElementById('profile-name');
+                if (nameInput.value) {
+                    userData.name = nameInput.value;
+                }
+                
+                updateProfilePage();
+            }
+        }
+
+        // Save name on input change
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameInput = document.getElementById('profile-name');
+            if (nameInput) {
+                nameInput.addEventListener('change', function() {
+                    userData.name = this.value;
+                });
+            }
+        });
+
+        // Handle avatar upload
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatar = document.getElementById('user-avatar-img');
+                    avatar.src = e.target.result;
+                    userData.customAvatar = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Chat/Matches
+        function updateMatchesList() {
+            const list = document.getElementById('matches-list');
+            
+            if (userData.matches.length === 0) {
+                list.innerHTML = `
+                    <div class="no-matches">
+                        <p>No matches yet!</p>
+                        <p style="margin-top: 10px;">Start swiping to find your political soulmate 💕</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = userData.matches.map((match, index) => {
+                const partyClass = match.party === 'Republican' ? 'republican-match' : 'democrat-match';
+                const imageSrc = match.image || '';
+                return `
+                    <div class="match-item ${partyClass}" onclick="openChat(${index})">
+                        <img class="match-avatar" src="${imageSrc}" alt="${match.name}">
+                        <div class="match-info">
+                            <h4>${match.name}, ${match.age}</h4>
+                            <p>${match.party} • Radical Score: ${match.radical}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Chat functionality
+        let currentChatPartner = null;
+        let messageCount = 0;
+
+        const firstResponses = [
+            "Hey! Nice to match with you 😊",
+            "Oh wow, love your profile! What's up?",
+            "Finally, someone with good political taste!",
+            "Hi there! Ready to talk politics? 😏",
+            "Hey cutie! What brings you here?",
+            "OMG hi! I love your radical score lol",
+            "Heyyyy, you seem interesting 👀",
+            "What's good! Nice to meet you!"
+        ];
+
+        const secondResponses = [
+            "Haha that's so true! We should hang out sometime",
+            "I totally agree! You're really cool 🔥",
+            "Omg yes! This is why I swiped right",
+            "Lol you're funny! I like that",
+            "Interesting perspective... I'm intrigued 😏",
+            "Wow we have so much in common!",
+            "That's exactly what I was thinking!",
+            "You get me! When are we going out? 💕"
+        ];
+
+        function openChat(index) {
+            currentChatPartner = userData.matches[index];
+            messageCount = currentChatPartner.messageCount || 0;
+            
+            // Set up conversation header
+            document.getElementById('conv-avatar').textContent = currentChatPartner.name[0];
+            document.getElementById('conv-name').textContent = currentChatPartner.name;
+            
+            // Clear and load messages
+            const container = document.getElementById('messages-container');
+            container.innerHTML = '';
+            
+            if (currentChatPartner.messages) {
+                currentChatPartner.messages.forEach(msg => {
+                    addMessageToUI(msg.text, msg.type);
+                });
+            }
+            
+            // Set party-specific styling for conversation page
+            const convPage = document.getElementById('conversation');
+            convPage.classList.remove('republican-conversation', 'democrat-conversation');
+            if (userData.party === 'republican') {
+                convPage.classList.add('republican-conversation');
+            } else if (userData.party === 'democrat') {
+                convPage.classList.add('democrat-conversation');
+            }
+            
+            // Check if limit reached
+            updateChatInputState();
+            
+            goToPage('conversation');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (!message || messageCount >= 2) return;
+            
+            // Add user message
+            addMessageToUI(message, 'sent');
+            saveMessage(message, 'sent');
+            input.value = '';
+            
+            messageCount++;
+            currentChatPartner.messageCount = messageCount;
+            
+            // Generate response after delay
+            setTimeout(() => {
+                const responses = messageCount === 1 ? firstResponses : secondResponses;
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                addMessageToUI(response, 'received');
+                saveMessage(response, 'received');
+                
+                updateChatInputState();
+            }, 1000 + Math.random() * 1000);
+            
+            updateChatInputState();
+        }
+
+        function addMessageToUI(text, type) {
+            const container = document.getElementById('messages-container');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.textContent = text;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function saveMessage(text, type) {
+            if (!currentChatPartner.messages) {
+                currentChatPartner.messages = [];
+            }
+            currentChatPartner.messages.push({ text, type });
+        }
+
+        function updateChatInputState() {
+            const inputArea = document.getElementById('chat-input-area');
+            if (messageCount >= 2) {
+                inputArea.innerHTML = '<p class="chat-limit-msg">You\'ve reached the message limit for this MVP demo! 💕</p>';
+            }
+        }
+
+        // Allow Enter key to send
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('conversation').classList.contains('active')) {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
