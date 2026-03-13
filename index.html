@@ -752,6 +752,32 @@
             color: var(--charcoal);
         }
 
+        .red40-btn {
+            margin-top: 15px;
+            padding: 10px 22px;
+            background: linear-gradient(135deg, #ff0033, #b3001d);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.95rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .red40-btn.off {
+            background: transparent;
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .red40-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
         .stat-value.editable {
             cursor: pointer;
             padding: 5px 10px;
@@ -777,6 +803,123 @@
         .stat-input:focus {
             outline: none;
             border-color: #ffffff;
+        }
+
+        /* Create Your Perfect Match */
+        #create-match {
+            padding-bottom: 100px;
+        }
+
+        .create-match-container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .create-match-title {
+            font-family: 'Bangers', cursive;
+            font-size: 2.7rem;
+            color: var(--gold);
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 10px;
+        }
+
+        .create-match-subtitle {
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .easel-frame {
+            margin: 0 auto;
+            width: 100%;
+            max-width: 480px;
+            background: #fdf5e0;
+            border-radius: 14px;
+            border: 6px solid #c8a96a;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+            padding: 16px;
+            position: relative;
+        }
+
+        .easel-leg-left,
+        .easel-leg-right {
+            position: absolute;
+            bottom: -40px;
+            width: 16px;
+            height: 60px;
+            background: #5c4520;
+            border-radius: 8px;
+        }
+
+        .easel-leg-left {
+            left: 80px;
+            transform: rotate(-6deg);
+        }
+
+        .easel-leg-right {
+            right: 80px;
+            transform: rotate(6deg);
+        }
+
+        .easel-prompt {
+            margin-bottom: 12px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: lowercase;
+        }
+
+        .prompt-text {
+            display: none;
+        }
+
+        .prompt-text .party-d {
+            font-weight: 900;
+        }
+
+        .prompt-rep .party-d {
+            color: var(--republican-red);
+        }
+
+        .prompt-dem .party-d {
+            color: var(--democrat-blue);
+        }
+
+        #match-canvas {
+            width: 100%;
+            max-width: 440px;
+            height: 260px;
+            border-radius: 10px;
+            background: #fffaf0;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+            cursor: crosshair;
+        }
+
+        .canvas-toolbar {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid var(--gold);
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--gold);
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .canvas-btn:hover {
+            background: var(--gold);
+            color: var(--charcoal);
         }
 
         /* Chat Page */
@@ -1407,6 +1550,10 @@
                 👤
                 <span>Profile</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Perfect</span>
+            </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
                 <span>Freedom</span>
@@ -1440,7 +1587,13 @@
                     <span class="stat-label">Viewing</span>
                     <span class="stat-value" id="profile-viewing"></span>
                 </div>
+                <div class="stat-row">
+                    <span class="stat-label">Red40 Maxxing</span>
+                    <span class="stat-value" id="profile-red40"></span>
+                </div>
                 <button class="edit-profile-btn" onclick="toggleEditMode()">✏️ Edit Profile</button>
+                <button id="red40-button" class="red40-btn off" onclick="toggleRed40()">🍒 Red40 Maxxing</button>
+                <button class="canvas-btn" style="margin-top: 10px;" onclick="goToPage('create-match')">🎨 Create Your Perfect Match</button>
             </div>
         </div>
         <div class="bottom-nav">
@@ -1455,6 +1608,58 @@
             <button class="nav-btn active" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Perfect</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('freedom')">
+                🦅
+                <span>Freedom</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Create Your Perfect Match Page -->
+    <div class="page" id="create-match">
+        <div class="create-match-container">
+            <h2 class="create-match-title">Create Your Perfect Match</h2>
+            <p class="create-match-subtitle">Design the golden partner your radical heart deserves.</p>
+
+            <div class="easel-frame">
+                <div class="easel-prompt">
+                    <span id="prompt-rep" class="prompt-text prompt-rep">
+                        draw your gol<span class="party-d">d</span>en partner
+                    </span>
+                    <span id="prompt-dem" class="prompt-text prompt-dem">
+                        draw your gol<span class="party-d">d</span>en partner
+                    </span>
+                </div>
+                <canvas id="match-canvas"></canvas>
+                <div class="easel-leg-left"></div>
+                <div class="easel-leg-right"></div>
+            </div>
+
+            <div class="canvas-toolbar">
+                <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear Canvas</button>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="goToPage('feed')">
+                🔥
+                <span>Feed</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('chat')">
+                💬
+                <span>Chat</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('profile')">
+                👤
+                <span>Profile</span>
+            </button>
+            <button class="nav-btn active" onclick="goToPage('create-match')">
+                🎨
+                <span>Perfect</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
@@ -1488,6 +1693,10 @@
             <button class="nav-btn" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Perfect</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
@@ -1524,6 +1733,10 @@
             <button class="nav-btn" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Perfect</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
@@ -1568,6 +1781,10 @@
                 👤
                 <span>Profile</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Perfect</span>
+            </button>
             <button class="nav-btn active" onclick="goToPage('freedom')">
                 🦅
                 <span>Freedom</span>
@@ -1584,7 +1801,8 @@
             radicalScore: 0,
             birthday: null,
             viewingOtherSide: false,
-            matches: []
+            matches: [],
+            red40Maxxing: false
         };
 
         // Sample profiles for feed
@@ -1619,6 +1837,10 @@
             
             if (pageId === 'feed') {
                 updateFeedProfile();
+            }
+            
+            if (pageId === 'create-match') {
+                updateCreateMatchPage();
             }
             
             if (pageId === 'chat') {
@@ -1781,18 +2003,25 @@
 
         // Feed functions
         function updateFeedProfile() {
-            const profiles = userData.viewingOtherSide 
-                ? (userData.party === 'republican' ? democratProfiles : republicanProfiles)
-                : (userData.party === 'republican' ? republicanProfiles : democratProfiles);
+            const isRed40 = userData.party === 'republican' && userData.red40Maxxing;
+            const isOtherSide = userData.viewingOtherSide && !isRed40;
+
+            let profiles;
+            let displayParty;
+
+            if (userData.party === 'republican') {
+                profiles = isOtherSide ? democratProfiles : republicanProfiles;
+                displayParty = isOtherSide ? 'Democrat' : 'Republican';
+            } else {
+                profiles = isOtherSide ? republicanProfiles : democratProfiles;
+                displayParty = isOtherSide ? 'Republican' : 'Democrat';
+            }
             
             if (currentProfileIndex >= profiles.length) {
                 currentProfileIndex = 0;
             }
             
             const profile = profiles[currentProfileIndex];
-            const displayParty = userData.viewingOtherSide 
-                ? (userData.party === 'republican' ? 'Democrat' : 'Republican')
-                : (userData.party === 'republican' ? 'Republican' : 'Democrat');
             
             document.getElementById('feed-name').textContent = `${profile.name}, ${profile.age}`;
             document.getElementById('feed-radical').textContent = profile.radical;
@@ -1815,16 +2044,23 @@
         }
 
         function swipeProfile(action) {
-            const profiles = userData.viewingOtherSide 
-                ? (userData.party === 'republican' ? democratProfiles : republicanProfiles)
-                : (userData.party === 'republican' ? republicanProfiles : democratProfiles);
+            const isRed40 = userData.party === 'republican' && userData.red40Maxxing;
+            const isOtherSide = userData.viewingOtherSide && !isRed40;
+
+            let profiles;
+            let displayParty;
+
+            if (userData.party === 'republican') {
+                profiles = isOtherSide ? democratProfiles : republicanProfiles;
+                displayParty = isOtherSide ? 'Democrat' : 'Republican';
+            } else {
+                profiles = isOtherSide ? republicanProfiles : democratProfiles;
+                displayParty = isOtherSide ? 'Republican' : 'Democrat';
+            }
             
             if (action === 'like') {
                 // Add to matches
                 const profile = profiles[currentProfileIndex];
-                const displayParty = userData.viewingOtherSide 
-                    ? (userData.party === 'republican' ? 'Democrat' : 'Republican')
-                    : (userData.party === 'republican' ? 'Republican' : 'Democrat');
                 
                 userData.matches.push({
                     name: profile.name,
@@ -1841,6 +2077,10 @@
         }
 
         function toggleOtherSide() {
+            if (userData.party === 'republican' && userData.red40Maxxing) {
+                // Red40 maxxing blocks viewing the other side
+                return;
+            }
             userData.viewingOtherSide = !userData.viewingOtherSide;
             currentProfileIndex = 0;
             updateFeedProfile();
@@ -1869,6 +2109,14 @@
             document.getElementById('profile-viewing').textContent = userData.viewingOtherSide 
                 ? 'The Other Side' 
                 : 'Your Party';
+            const red40Value = document.getElementById('profile-red40');
+            if (red40Value) {
+                if (userData.party === 'republican') {
+                    red40Value.textContent = userData.red40Maxxing ? 'On' : 'Off';
+                } else {
+                    red40Value.textContent = 'N/A';
+                }
+            }
             
             // Set name if exists
             if (userData.name) {
@@ -1892,6 +2140,137 @@
                 profilePage.classList.add('republican-profile');
             } else if (userData.party === 'democrat') {
                 profilePage.classList.add('democrat-profile');
+            }
+
+            // Update Red40 button
+            const red40Btn = document.getElementById('red40-button');
+            if (red40Btn) {
+                if (userData.party === 'republican') {
+                    red40Btn.style.display = 'inline-block';
+                    if (userData.red40Maxxing) {
+                        red40Btn.classList.remove('off');
+                        red40Btn.textContent = '🍒 Red40 Maxxing: ON';
+                    } else {
+                        red40Btn.classList.add('off');
+                        red40Btn.textContent = '🍒 Red40 Maxxing: OFF';
+                    }
+                } else {
+                    red40Btn.style.display = 'none';
+                }
+            }
+        }
+
+        function toggleRed40() {
+            if (userData.party !== 'republican') {
+                alert('Red40 Maxxing is only for Republicans.');
+                return;
+            }
+            userData.red40Maxxing = !userData.red40Maxxing;
+            if (userData.red40Maxxing) {
+                // Force back to own side
+                userData.viewingOtherSide = false;
+            }
+            currentProfileIndex = 0;
+            updateFeedProfile();
+            updateProfilePage();
+        }
+
+        // Create Your Perfect Match
+        let matchCanvas;
+        let matchCtx;
+        let isDrawing = false;
+
+        function initMatchCanvas() {
+            matchCanvas = document.getElementById('match-canvas');
+            if (!matchCanvas) return;
+            matchCtx = matchCanvas.getContext('2d');
+
+            const resize = () => {
+                const rect = matchCanvas.getBoundingClientRect();
+                const savedImage = matchCanvas.toDataURL();
+                matchCanvas.width = rect.width;
+                matchCanvas.height = rect.height;
+                const img = new Image();
+                img.onload = () => {
+                    matchCtx.drawImage(img, 0, 0, matchCanvas.width, matchCanvas.height);
+                };
+                img.src = savedImage;
+            };
+
+            resize();
+            window.addEventListener('resize', resize);
+
+            const start = (x, y) => {
+                isDrawing = true;
+                matchCtx.strokeStyle = '#111111';
+                matchCtx.lineWidth = 3;
+                matchCtx.lineCap = 'round';
+                matchCtx.beginPath();
+                matchCtx.moveTo(x, y);
+            };
+
+            const draw = (x, y) => {
+                if (!isDrawing) return;
+                matchCtx.lineTo(x, y);
+                matchCtx.stroke();
+            };
+
+            const end = () => {
+                if (!isDrawing) return;
+                isDrawing = false;
+                matchCtx.closePath();
+            };
+
+            matchCanvas.addEventListener('mousedown', (e) => {
+                const rect = matchCanvas.getBoundingClientRect();
+                start(e.clientX - rect.left, e.clientY - rect.top);
+            });
+            matchCanvas.addEventListener('mousemove', (e) => {
+                const rect = matchCanvas.getBoundingClientRect();
+                draw(e.clientX - rect.left, e.clientY - rect.top);
+            });
+            window.addEventListener('mouseup', end);
+
+            matchCanvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const rect = matchCanvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                start(touch.clientX - rect.left, touch.clientY - rect.top);
+            }, { passive: false });
+
+            matchCanvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const rect = matchCanvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                draw(touch.clientX - rect.left, touch.clientY - rect.top);
+            }, { passive: false });
+
+            window.addEventListener('touchend', end);
+        }
+
+        function clearCanvas() {
+            if (!matchCanvas || !matchCtx) return;
+            matchCtx.clearRect(0, 0, matchCanvas.width, matchCanvas.height);
+        }
+
+        function updateCreateMatchPage() {
+            if (!matchCanvas) {
+                initMatchCanvas();
+            }
+            const repPrompt = document.getElementById('prompt-rep');
+            const demPrompt = document.getElementById('prompt-dem');
+            if (!repPrompt || !demPrompt) return;
+
+            repPrompt.style.display = 'none';
+            demPrompt.style.display = 'none';
+
+            if (userData.party === 'republican') {
+                repPrompt.style.display = 'inline-block';
+            } else if (userData.party === 'democrat') {
+                demPrompt.style.display = 'inline-block';
+            } else {
+                repPrompt.style.display = 'inline-block';
+                demPrompt.style.display = 'inline-block';
             }
         }
 

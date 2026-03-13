@@ -2,8 +2,9 @@
   "name": "political-dating",
   "version": "1.0.0",
   "description": "",
-  "main": "sw.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,7 @@
   "dependencies": {
     "@capacitor/cli": "^8.0.2",
     "@capacitor/core": "^8.0.2",
-    "@capacitor/ios": "^8.0.2"
+    "@capacitor/ios": "^8.0.2",
+    "express": "^5.2.1"
   }
 }
