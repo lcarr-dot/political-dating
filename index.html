@@ -900,9 +900,9 @@
         .canvas-toolbar {
             margin-top: 12px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             gap: 12px;
-            flex-wrap: wrap;
         }
 
         .canvas-btn {
@@ -920,6 +920,61 @@
         .canvas-btn:hover {
             background: var(--gold);
             color: var(--charcoal);
+        }
+
+        .canvas-slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .canvas-slider-label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            min-width: 90px;
+        }
+
+        .canvas-slider {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .canvas-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            border: 2px solid #1a1a1a;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .canvas-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            border: 2px solid #1a1a1a;
+        }
+
+        .canvas-slider-value {
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+            min-width: 36px;
         }
 
         /* Chat Page */
@@ -1641,6 +1696,16 @@
             </div>
 
             <div class="canvas-toolbar">
+                <div class="canvas-slider-row">
+                    <span class="canvas-slider-label">Brush size</span>
+                    <input type="range" class="canvas-slider" id="brush-size-slider" min="1" max="40" value="3">
+                    <span class="canvas-slider-value" id="brush-size-value">3</span>
+                </div>
+                <div class="canvas-slider-row">
+                    <span class="canvas-slider-label">Opacity</span>
+                    <input type="range" class="canvas-slider" id="brush-opacity-slider" min="10" max="100" value="100">
+                    <span class="canvas-slider-value" id="brush-opacity-value">100%</span>
+                </div>
                 <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear Canvas</button>
             </div>
         </div>
@@ -2192,11 +2257,33 @@
             resize();
             window.addEventListener('resize', resize);
 
+            const sizeSlider = document.getElementById('brush-size-slider');
+            const sizeValue = document.getElementById('brush-size-value');
+            const opacitySlider = document.getElementById('brush-opacity-slider');
+            const opacityValue = document.getElementById('brush-opacity-value');
+            if (sizeSlider && sizeValue) {
+                sizeSlider.addEventListener('input', () => { sizeValue.textContent = sizeSlider.value; });
+            }
+            if (opacitySlider && opacityValue) {
+                opacitySlider.addEventListener('input', () => { opacityValue.textContent = opacitySlider.value + '%'; });
+            }
+
+            const getBrushSize = () => {
+                const el = document.getElementById('brush-size-slider');
+                return el ? parseInt(el.value, 10) : 3;
+            };
+            const getBrushOpacity = () => {
+                const el = document.getElementById('brush-opacity-slider');
+                return el ? parseInt(el.value, 10) / 100 : 1;
+            };
+
             const start = (x, y) => {
                 isDrawing = true;
-                matchCtx.strokeStyle = '#111111';
-                matchCtx.lineWidth = 3;
+                const opacity = getBrushOpacity();
+                matchCtx.strokeStyle = `rgba(17, 17, 17, ${opacity})`;
+                matchCtx.lineWidth = getBrushSize();
                 matchCtx.lineCap = 'round';
+                matchCtx.lineJoin = 'round';
                 matchCtx.beginPath();
                 matchCtx.moveTo(x, y);
             };
