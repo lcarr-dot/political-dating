@@ -1,4 +1,4 @@
-const CACHE_NAME = 'political-dating-v1';
+const CACHE_NAME = 'political-dating-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -54,24 +54,41 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event
 self.addEventListener('fetch', event => {
+  const req = event.request;
+
+  // Network-first for navigations (HTML) so new deployments show up immediately
+  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+    event.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // Cache-first for static assets (images, icons, etc.)
   event.respondWith(
-    caches.match(event.request)
+    caches.match(req)
       .then(response => {
         if (response) {
           return response;
         }
-        return fetch(event.request).then(response => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
+        return fetch(req).then(res => {
+          if (!res || res.status !== 200 || res.type !== 'basic') {
+            return res;
           }
-          const responseToCache = response.clone();
+          const copy = res.clone();
           caches.open(CACHE_NAME)
             .then(cache => {
-              cache.put(event.request, responseToCache);
+              cache.put(req, copy);
             });
-          return response;
+          return res;
         });
       })
   );
