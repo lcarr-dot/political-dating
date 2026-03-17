@@ -1013,6 +1013,13 @@
             box-shadow: 0 0 0 2px #1a1a1a, 0 0 12px rgba(212, 175, 55, 0.8);
         }
 
+        .canvas-toolbar-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         /* Chat Page */
         .chat-container {
             max-width: 500px;
@@ -1744,7 +1751,11 @@
                     <input type="range" class="canvas-slider" id="brush-opacity-slider" min="10" max="100" value="100">
                     <span class="canvas-slider-value" id="brush-opacity-value">100%</span>
                 </div>
-                <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear Canvas</button>
+                <div class="canvas-toolbar-row">
+                    <button class="canvas-btn" onclick="undoCanvas()">↩ Undo</button>
+                    <button class="canvas-btn" onclick="redoCanvas()">↪ Redo</button>
+                    <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear</button>
+                </div>
             </div>
         </div>
         <div class="bottom-nav">
@@ -2274,6 +2285,31 @@
         let matchCanvas;
         let matchCtx;
         let isDrawing = false;
+        const MAX_UNDO = 20;
+        let canvasUndoStack = [];
+        let canvasRedoStack = [];
+
+        function saveCanvasState() {
+            if (!matchCanvas || !matchCtx) return null;
+            return matchCtx.getImageData(0, 0, matchCanvas.width, matchCanvas.height);
+        }
+
+        function restoreCanvasState(imageData) {
+            if (!matchCtx || !imageData) return;
+            matchCtx.putImageData(imageData, 0, 0);
+        }
+
+        function undoCanvas() {
+            if (canvasUndoStack.length === 0) return;
+            canvasRedoStack.push(saveCanvasState());
+            restoreCanvasState(canvasUndoStack.pop());
+        }
+
+        function redoCanvas() {
+            if (canvasRedoStack.length === 0) return;
+            canvasUndoStack.push(saveCanvasState());
+            restoreCanvasState(canvasRedoStack.pop());
+        }
 
         const CANVAS_PALETTE_COLORS = [
             '#1a1a1a', '#2c1810', '#3d2314', '#4a3728', '#6f4e37', '#8b4513', '#a0522d', '#c4a574', '#e8dcc4', '#b8860b',
@@ -2307,6 +2343,8 @@
                 const savedImage = matchCanvas.toDataURL();
                 matchCanvas.width = rect.width;
                 matchCanvas.height = rect.height;
+                canvasUndoStack = [];
+                canvasRedoStack = [];
                 const img = new Image();
                 img.onload = () => {
                     matchCtx.drawImage(img, 0, 0, matchCanvas.width, matchCanvas.height);
@@ -2369,6 +2407,12 @@
                 if (!isDrawing) return;
                 isDrawing = false;
                 matchCtx.closePath();
+                const state = saveCanvasState();
+                if (state) {
+                    canvasUndoStack.push(state);
+                    if (canvasUndoStack.length > MAX_UNDO) canvasUndoStack.shift();
+                    canvasRedoStack = [];
+                }
             };
 
             matchCanvas.addEventListener('mousedown', (e) => {
@@ -2401,6 +2445,8 @@
         function clearCanvas() {
             if (!matchCanvas || !matchCtx) return;
             matchCtx.clearRect(0, 0, matchCanvas.width, matchCanvas.height);
+            canvasUndoStack = [];
+            canvasRedoStack = [];
         }
 
         function updateCreateMatchPage() {
