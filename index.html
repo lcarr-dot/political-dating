@@ -1030,6 +1030,51 @@
             color: #fff;
         }
 
+        .canvas-stamps-label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+
+        .canvas-stamps-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-width: 440px;
+            padding: 6px 0;
+            max-height: 52px;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .canvas-stamp-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .canvas-stamp-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            border-color: var(--gold);
+        }
+
+        .canvas-stamp-item:active {
+            cursor: grabbing;
+        }
+
         .perfect-match-section {
             width: 100%;
             max-width: 280px;
@@ -1784,6 +1829,8 @@
             <div class="canvas-toolbar">
                 <span class="canvas-palette-label">Color</span>
                 <div class="canvas-palette" id="canvas-palette"></div>
+                <span class="canvas-stamps-label">Stamps — drag onto canvas</span>
+                <div class="canvas-stamps-row" id="canvas-stamps-row"></div>
                 <div class="canvas-slider-row">
                     <span class="canvas-slider-label">Brush size</span>
                     <input type="range" class="canvas-slider" id="brush-size-slider" min="1" max="40" value="3">
@@ -2379,6 +2426,36 @@
             '#E31C23', '#0015BC', '#D4AF37', '#2d5016', '#4a0e0e', '#1a1a2e', '#ffffff', '#333333', '#ff69b4', '#0d9488'
         ];
 
+        const CANVAS_STAMPS = [
+            '🐘', '🫏', '🇺🇸', '🦅', '⭐', '❤️', '💙', '🗽', '🎩', '👒', '🧢', '🎀', '✨', '🔥', '💯', '🦊', '🐴', '🏛️', '📜', '🗳️'
+        ];
+
+        let selectedStampChar = null;
+
+        function drawStampOnCanvas(x, y, char) {
+            if (!matchCtx || !char) return;
+            matchCtx.save();
+            const size = 36;
+            matchCtx.font = `${size}px serif`;
+            matchCtx.textAlign = 'center';
+            matchCtx.textBaseline = 'middle';
+            const opacity = document.getElementById('brush-opacity-slider') ? parseInt(document.getElementById('brush-opacity-slider').value, 10) / 100 : 1;
+            const hex = document.querySelector('.canvas-swatch.selected') ? document.querySelector('.canvas-swatch.selected').getAttribute('data-color') : '#1a1a1a';
+            const n = parseInt(hex.slice(1), 16);
+            const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+            matchCtx.fillStyle = `rgba(${r},${g},${b},${opacity})`;
+            matchCtx.fillText(char, x, y);
+            matchCtx.restore();
+        }
+
+        function placeStampOnCanvas(x, y, char) {
+            if (!matchCanvas || !matchCtx || !char) return;
+            canvasUndoStack.push(saveCanvasState());
+            if (canvasUndoStack.length > MAX_UNDO) canvasUndoStack.shift();
+            canvasRedoStack = [];
+            drawStampOnCanvas(x, y, char);
+        }
+
         function initMatchCanvas() {
             matchCanvas = document.getElementById('match-canvas');
             if (!matchCanvas) return;
@@ -2397,6 +2474,27 @@
                         swatch.classList.add('selected');
                     });
                     paletteEl.appendChild(swatch);
+                });
+            }
+
+            const stampsRow = document.getElementById('canvas-stamps-row');
+            if (stampsRow && !stampsRow.innerHTML) {
+                CANVAS_STAMPS.forEach((char) => {
+                    const el = document.createElement('div');
+                    el.className = 'canvas-stamp-item';
+                    el.setAttribute('draggable', 'true');
+                    el.setAttribute('data-stamp-char', char);
+                    el.textContent = char;
+                    el.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', char);
+                        e.dataTransfer.effectAllowed = 'copy';
+                    });
+                    el.addEventListener('click', () => {
+                        selectedStampChar = selectedStampChar === char ? null : char;
+                        stampsRow.querySelectorAll('.canvas-stamp-item').forEach(s => s.style.borderColor = '');
+                        if (selectedStampChar === char) el.style.borderColor = 'var(--gold)';
+                    });
+                    stampsRow.appendChild(el);
                 });
             }
 
@@ -2477,9 +2575,30 @@
                 }
             };
 
+            matchCanvas.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+            });
+            matchCanvas.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const rect = matchCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const char = e.dataTransfer.getData('text/plain');
+                if (char && CANVAS_STAMPS.includes(char)) placeStampOnCanvas(x, y, char);
+            });
+
             matchCanvas.addEventListener('mousedown', (e) => {
                 const rect = matchCanvas.getBoundingClientRect();
-                start(e.clientX - rect.left, e.clientY - rect.top);
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                if (selectedStampChar) {
+                    placeStampOnCanvas(x, y, selectedStampChar);
+                    selectedStampChar = null;
+                    document.querySelectorAll('.canvas-stamp-item').forEach(s => { s.style.borderColor = ''; });
+                    return;
+                }
+                start(x, y);
             });
             matchCanvas.addEventListener('mousemove', (e) => {
                 const rect = matchCanvas.getBoundingClientRect();
@@ -2491,7 +2610,15 @@
                 e.preventDefault();
                 const rect = matchCanvas.getBoundingClientRect();
                 const touch = e.touches[0];
-                start(touch.clientX - rect.left, touch.clientY - rect.top);
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                if (selectedStampChar) {
+                    placeStampOnCanvas(x, y, selectedStampChar);
+                    selectedStampChar = null;
+                    document.querySelectorAll('.canvas-stamp-item').forEach(s => { s.style.borderColor = ''; });
+                    return;
+                }
+                start(x, y);
             }, { passive: false });
 
             matchCanvas.addEventListener('touchmove', (e) => {
