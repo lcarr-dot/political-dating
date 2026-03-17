@@ -977,6 +977,42 @@
             min-width: 36px;
         }
 
+        .canvas-palette-label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+
+        .canvas-palette {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            max-width: 440px;
+            padding: 8px 0;
+        }
+
+        .canvas-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .canvas-swatch:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+        }
+
+        .canvas-swatch.selected {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px #1a1a1a, 0 0 12px rgba(212, 175, 55, 0.8);
+        }
+
         /* Chat Page */
         .chat-container {
             max-width: 500px;
@@ -1696,6 +1732,8 @@
             </div>
 
             <div class="canvas-toolbar">
+                <span class="canvas-palette-label">Color</span>
+                <div class="canvas-palette" id="canvas-palette"></div>
                 <div class="canvas-slider-row">
                     <span class="canvas-slider-label">Brush size</span>
                     <input type="range" class="canvas-slider" id="brush-size-slider" min="1" max="40" value="3">
@@ -2237,10 +2275,32 @@
         let matchCtx;
         let isDrawing = false;
 
+        const CANVAS_PALETTE_COLORS = [
+            '#1a1a1a', '#2c1810', '#3d2314', '#4a3728', '#6f4e37', '#8b4513', '#a0522d', '#c4a574', '#e8dcc4', '#b8860b',
+            '#f5d0c4', '#e8b4a0', '#d4a574', '#c4956a', '#a67c52', '#8d5524',
+            '#E31C23', '#0015BC', '#D4AF37', '#2d5016', '#4a0e0e', '#1a1a2e', '#ffffff', '#333333', '#ff69b4', '#0d9488'
+        ];
+
         function initMatchCanvas() {
             matchCanvas = document.getElementById('match-canvas');
             if (!matchCanvas) return;
             matchCtx = matchCanvas.getContext('2d');
+
+            const paletteEl = document.getElementById('canvas-palette');
+            if (paletteEl && !paletteEl.innerHTML) {
+                CANVAS_PALETTE_COLORS.forEach((hex, i) => {
+                    const swatch = document.createElement('button');
+                    swatch.type = 'button';
+                    swatch.className = 'canvas-swatch' + (i === 0 ? ' selected' : '');
+                    swatch.setAttribute('data-color', hex);
+                    swatch.style.background = hex;
+                    swatch.addEventListener('click', () => {
+                        paletteEl.querySelectorAll('.canvas-swatch').forEach(s => s.classList.remove('selected'));
+                        swatch.classList.add('selected');
+                    });
+                    paletteEl.appendChild(swatch);
+                });
+            }
 
             const resize = () => {
                 const rect = matchCanvas.getBoundingClientRect();
@@ -2277,10 +2337,21 @@
                 return el ? parseInt(el.value, 10) / 100 : 1;
             };
 
+            const hexToRgba = (hex, alpha) => {
+                const n = parseInt(hex.slice(1), 16);
+                const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+                return `rgba(${r},${g},${b},${alpha})`;
+            };
+
+            const getBrushColor = () => {
+                const selected = document.querySelector('.canvas-swatch.selected');
+                return selected ? selected.getAttribute('data-color') : '#1a1a1a';
+            };
+
             const start = (x, y) => {
                 isDrawing = true;
                 const opacity = getBrushOpacity();
-                matchCtx.strokeStyle = `rgba(17, 17, 17, ${opacity})`;
+                matchCtx.strokeStyle = hexToRgba(getBrushColor(), opacity);
                 matchCtx.lineWidth = getBrushSize();
                 matchCtx.lineCap = 'round';
                 matchCtx.lineJoin = 'round';
