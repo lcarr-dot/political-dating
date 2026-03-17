@@ -1041,6 +1041,45 @@
             color: #fff;
         }
 
+        .perfect-match-ai-section {
+            width: 100%;
+            max-width: 480px;
+            margin: 20px auto 0;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .perfect-match-ai-label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.95rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .perfect-match-ai-text {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.45;
+            margin-bottom: 10px;
+        }
+
+        .canvas-btn-regen {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .profile-perfect-match-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+            margin-top: 10px;
+            max-width: 260px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .canvas-stamps-label {
             font-family: 'Crimson Pro', serif;
             font-size: 0.9rem;
@@ -1829,6 +1868,7 @@
             <div class="perfect-match-section empty" id="perfect-match-section">
                 <p class="perfect-match-label">My perfect match</p>
                 <img id="profile-perfect-match-img" class="profile-perfect-match-img" src="" alt="Your perfect match drawing">
+                <p class="profile-perfect-match-desc" id="profile-perfect-match-desc"></p>
             </div>
             <div class="user-stats">
                 <div class="stat-row">
@@ -1928,6 +1968,11 @@
                     <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear</button>
                     <button class="canvas-btn canvas-btn-save" onclick="savePerfectMatchToProfile()">💾 Save to profile</button>
                 </div>
+            </div>
+            <div class="perfect-match-ai-section">
+                <p class="perfect-match-ai-label">✨ AI description of your perfect match</p>
+                <p class="perfect-match-ai-text" id="perfect-match-ai-text">Generating…</p>
+                <button type="button" class="canvas-btn canvas-btn-regen" onclick="loadPerfectMatchDescription(true)">🔄 Regenerate</button>
             </div>
         </div>
         <div class="bottom-nav">
@@ -2133,7 +2178,8 @@
             viewingOtherSide: false,
             matches: [],
             red40Maxxing: false,
-            perfectMatchImage: null
+            perfectMatchImage: null,
+            perfectMatchDescription: null
         };
 
         // Sample profiles for feed
@@ -2470,18 +2516,24 @@
                 avatar.src = '';
             }
 
-            // Perfect match image
+            // Perfect match image and AI description
             const perfectMatchSection = document.getElementById('perfect-match-section');
             const perfectMatchImg = document.getElementById('profile-perfect-match-img');
+            const perfectMatchDesc = document.getElementById('profile-perfect-match-desc');
             if (perfectMatchSection && perfectMatchImg) {
                 if (userData.perfectMatchImage) {
                     perfectMatchSection.classList.remove('empty');
                     perfectMatchImg.src = userData.perfectMatchImage;
                     perfectMatchImg.style.display = 'block';
+                    if (perfectMatchDesc) {
+                        perfectMatchDesc.textContent = userData.perfectMatchDescription || '';
+                        perfectMatchDesc.style.display = userData.perfectMatchDescription ? 'block' : 'none';
+                    }
                 } else {
                     perfectMatchSection.classList.add('empty');
                     perfectMatchImg.src = '';
                     perfectMatchImg.style.display = 'none';
+                    if (perfectMatchDesc) perfectMatchDesc.style.display = 'none';
                 }
             }
 
@@ -2901,6 +2953,32 @@
                 });
         }
 
+        function loadPerfectMatchDescription(force) {
+            const el = document.getElementById('perfect-match-ai-text');
+            if (!el) return;
+            if (!force && userData.perfectMatchDescription) {
+                el.textContent = userData.perfectMatchDescription;
+                return;
+            }
+            const party = userData.party || 'republican';
+            const radicalScore = userData.radicalScore ?? 420;
+            el.textContent = 'Generating…';
+            fetch('/api/describe-perfect-match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ party, radicalScore })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const desc = data.description || 'Your perfect match is out there.';
+                    userData.perfectMatchDescription = desc;
+                    el.textContent = desc;
+                })
+                .catch(() => {
+                    el.textContent = 'Could not generate. Check the server.';
+                });
+        }
+
         function updateCreateMatchPage() {
             if (!matchCanvas) {
                 initMatchCanvas();
@@ -2920,6 +2998,8 @@
                 repPrompt.style.display = 'inline-block';
                 demPrompt.style.display = 'inline-block';
             }
+
+            loadPerfectMatchDescription(false);
         }
 
         function toggleEditMode() {
