@@ -424,7 +424,7 @@
             color: #000000;
         }
 
-        /* Bottom Navigation */
+        /* Bottom Navigation - Canvas always visible */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -434,31 +434,30 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 10px 4px 15px;
+            padding: 8px 6px 12px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
+            flex-wrap: wrap;
+            gap: 4px 2px;
         }
 
         .nav-btn {
             background: none;
             border: none;
             color: rgba(255, 255, 255, 0.5);
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
-            flex-shrink: 0;
-            min-width: 52px;
+            gap: 2px;
+            flex: 1 1 0;
+            min-width: 0;
+            max-width: 80px;
         }
 
         .nav-btn span {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-family: 'Crimson Pro', serif;
             white-space: nowrap;
         }
@@ -1875,6 +1874,10 @@
                 🔥
                 <span>Feed</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Canvas</span>
+            </button>
             <button class="nav-btn" onclick="goToPage('chat')">
                 💬
                 <span>Chat</span>
@@ -1882,10 +1885,6 @@
             <button class="nav-btn" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
-            </button>
-            <button class="nav-btn" onclick="goToPage('create-match')">
-                🎨
-                <span>Canvas</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
@@ -1943,6 +1942,10 @@
                 🔥
                 <span>Feed</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Canvas</span>
+            </button>
             <button class="nav-btn" onclick="goToPage('chat')">
                 💬
                 <span>Chat</span>
@@ -1950,10 +1953,6 @@
             <button class="nav-btn active" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
-            </button>
-            <button class="nav-btn" onclick="goToPage('create-match')">
-                🎨
-                <span>Canvas</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
@@ -2022,6 +2021,10 @@
                 🔥
                 <span>Feed</span>
             </button>
+            <button class="nav-btn active" onclick="goToPage('create-match')">
+                🎨
+                <span>Canvas</span>
+            </button>
             <button class="nav-btn" onclick="goToPage('chat')">
                 💬
                 <span>Chat</span>
@@ -2029,10 +2032,6 @@
             <button class="nav-btn" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
-            </button>
-            <button class="nav-btn active" onclick="goToPage('create-match')">
-                🎨
-                <span>Canvas</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
@@ -2063,6 +2062,10 @@
                 🔥
                 <span>Feed</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Canvas</span>
+            </button>
             <button class="nav-btn active" onclick="goToPage('chat')">
                 💬
                 <span>Chat</span>
@@ -2070,10 +2073,6 @@
             <button class="nav-btn" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
-            </button>
-            <button class="nav-btn" onclick="goToPage('create-match')">
-                🎨
-                <span>Canvas</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
@@ -2150,6 +2149,10 @@
                 🔥
                 <span>Feed</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Canvas</span>
+            </button>
             <button class="nav-btn" onclick="goToPage('chat')">
                 💬
                 <span>Chat</span>
@@ -2157,10 +2160,6 @@
             <button class="nav-btn" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
-            </button>
-            <button class="nav-btn" onclick="goToPage('create-match')">
-                🎨
-                <span>Canvas</span>
             </button>
             <button class="nav-btn active" onclick="goToPage('freedom')">
                 🦅
@@ -2186,6 +2185,10 @@
                 🔥
                 <span>Feed</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Canvas</span>
+            </button>
             <button class="nav-btn" onclick="goToPage('chat')">
                 💬
                 <span>Chat</span>
@@ -2193,10 +2196,6 @@
             <button class="nav-btn" onclick="goToPage('profile')">
                 👤
                 <span>Profile</span>
-            </button>
-            <button class="nav-btn" onclick="goToPage('create-match')">
-                🎨
-                <span>Canvas</span>
             </button>
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
