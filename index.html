@@ -1855,6 +1855,7 @@
                 <div class="canvas-toolbar-row">
                     <button class="canvas-btn canvas-tool-btn canvas-tool-active" id="canvas-tool-brush" onclick="setCanvasTool('brush')">✏️ Brush</button>
                     <button class="canvas-btn canvas-tool-btn" id="canvas-tool-fill" onclick="setCanvasTool('fill')">🪣 Fill</button>
+                    <button class="canvas-btn canvas-tool-btn" id="canvas-tool-eraser" onclick="setCanvasTool('eraser')">🧹 Eraser</button>
                     <button class="canvas-btn" onclick="undoCanvas()">↩ Undo</button>
                     <button class="canvas-btn" onclick="redoCanvas()">↪ Redo</button>
                     <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear</button>
@@ -2446,12 +2447,16 @@
         let selectedStampChar = null;
         let canvasTool = 'brush';
 
+        const CANVAS_BG = '#fffaf0';
+
         function setCanvasTool(tool) {
             canvasTool = tool;
             const brushBtn = document.getElementById('canvas-tool-brush');
             const fillBtn = document.getElementById('canvas-tool-fill');
+            const eraserBtn = document.getElementById('canvas-tool-eraser');
             if (brushBtn) brushBtn.classList.toggle('canvas-tool-active', tool === 'brush');
             if (fillBtn) fillBtn.classList.toggle('canvas-tool-active', tool === 'fill');
+            if (eraserBtn) eraserBtn.classList.toggle('canvas-tool-active', tool === 'eraser');
         }
 
         function floodFillCanvas(px, py) {
@@ -2630,11 +2635,17 @@
 
             const start = (x, y) => {
                 isDrawing = true;
-                const opacity = getBrushOpacity();
-                matchCtx.strokeStyle = hexToRgba(getBrushColor(), opacity);
-                matchCtx.lineWidth = getBrushSize();
+                const size = getBrushSize();
+                matchCtx.lineWidth = size;
                 matchCtx.lineCap = 'round';
                 matchCtx.lineJoin = 'round';
+                if (canvasTool === 'eraser') {
+                    matchCtx.strokeStyle = CANVAS_BG;
+                    matchCtx.globalCompositeOperation = 'source-over';
+                } else {
+                    const opacity = getBrushOpacity();
+                    matchCtx.strokeStyle = hexToRgba(getBrushColor(), opacity);
+                }
                 matchCtx.beginPath();
                 matchCtx.moveTo(x, y);
             };
