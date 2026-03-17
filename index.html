@@ -1115,6 +1115,65 @@
             display: none;
         }
 
+        /* Gallery Page */
+        .gallery-container {
+            width: 100%;
+            max-width: 700px;
+            padding: 0 15px;
+        }
+
+        .gallery-title {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            color: var(--gold);
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .gallery-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px;
+            justify-items: center;
+        }
+
+        .gallery-item {
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid var(--gold);
+            background: #fffaf0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .gallery-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            margin-top: 24px;
+        }
+
+        .gallery-empty.hidden {
+            display: none;
+        }
+
         /* Chat Page */
         .chat-container {
             max-width: 500px;
@@ -1751,6 +1810,10 @@
                 🦅
                 <span>Freedom</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('gallery')">
+                🖼️
+                <span>Gallery</span>
+            </button>
         </div>
     </div>
 
@@ -1813,6 +1876,10 @@
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
                 <span>Freedom</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('gallery')">
+                🖼️
+                <span>Gallery</span>
             </button>
         </div>
     </div>
@@ -1884,6 +1951,10 @@
                 🦅
                 <span>Freedom</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('gallery')">
+                🖼️
+                <span>Gallery</span>
+            </button>
         </div>
     </div>
 
@@ -1920,6 +1991,10 @@
             <button class="nav-btn" onclick="goToPage('freedom')">
                 🦅
                 <span>Freedom</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('gallery')">
+                🖼️
+                <span>Gallery</span>
             </button>
         </div>
     </div>
@@ -1961,6 +2036,10 @@
                 🦅
                 <span>Freedom</span>
             </button>
+            <button class="nav-btn" onclick="goToPage('gallery')">
+                🖼️
+                <span>Gallery</span>
+            </button>
         </div>
     </div>
 
@@ -1999,6 +2078,46 @@
             <button class="nav-btn active" onclick="goToPage('freedom')">
                 🦅
                 <span>Freedom</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('gallery')">
+                🖼️
+                <span>Gallery</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Gallery Page -->
+    <div class="page" id="gallery" style="padding-bottom: 100px; justify-content: flex-start; padding-top: 20px;">
+        <div class="gallery-container">
+            <h2 class="gallery-title">Perfect Match Gallery</h2>
+            <p class="gallery-subtitle">Drawings from the community</p>
+            <div class="gallery-grid" id="gallery-grid"></div>
+            <p class="gallery-empty" id="gallery-empty">No drawings yet. Save your perfect match to add one!</p>
+        </div>
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="goToPage('feed')">
+                🔥
+                <span>Feed</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('chat')">
+                💬
+                <span>Chat</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('profile')">
+                👤
+                <span>Profile</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('create-match')">
+                🎨
+                <span>Perfect</span>
+            </button>
+            <button class="nav-btn" onclick="goToPage('freedom')">
+                🦅
+                <span>Freedom</span>
+            </button>
+            <button class="nav-btn active" onclick="goToPage('gallery')">
+                🖼️
+                <span>Gallery</span>
             </button>
         </div>
     </div>
@@ -2053,6 +2172,10 @@
             
             if (pageId === 'create-match') {
                 updateCreateMatchPage();
+            }
+
+            if (pageId === 'gallery') {
+                loadGallery();
             }
             
             if (pageId === 'chat') {
@@ -2743,8 +2866,39 @@
             if (!matchCanvas || !matchCtx) return;
             const png = matchCanvas.toDataURL('image/png');
             userData.perfectMatchImage = png;
+            fetch('/api/gallery', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: png })
+            }).catch(() => {});
             updateProfilePage();
             goToPage('profile');
+        }
+
+        function loadGallery() {
+            const grid = document.getElementById('gallery-grid');
+            const empty = document.getElementById('gallery-empty');
+            if (!grid || !empty) return;
+            grid.innerHTML = '';
+            fetch('/api/gallery')
+                .then(res => res.json())
+                .then(data => {
+                    const images = data.images || [];
+                    empty.classList.toggle('hidden', images.length > 0);
+                    images.forEach((item) => {
+                        const cell = document.createElement('div');
+                        cell.className = 'gallery-item';
+                        const img = document.createElement('img');
+                        img.src = item.image;
+                        img.alt = 'Perfect match drawing';
+                        cell.appendChild(img);
+                        grid.appendChild(cell);
+                    });
+                })
+                .catch(() => {
+                    empty.classList.remove('hidden');
+                    empty.textContent = 'Could not load gallery. Make sure the server is running.';
+                });
         }
 
         function updateCreateMatchPage() {
