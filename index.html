@@ -1020,6 +1020,45 @@
             flex-wrap: wrap;
         }
 
+        .canvas-btn-save {
+            background: linear-gradient(135deg, #2d5016, #1a3309);
+            border-color: #4a7c23;
+        }
+
+        .canvas-btn-save:hover {
+            background: #4a7c23;
+            color: #fff;
+        }
+
+        .perfect-match-section {
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto 20px;
+            text-align: center;
+        }
+
+        .perfect-match-label {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .profile-perfect-match-img {
+            width: 100%;
+            max-width: 260px;
+            height: auto;
+            max-height: 180px;
+            object-fit: contain;
+            border-radius: 12px;
+            border: 3px solid var(--gold);
+            background: #fffaf0;
+        }
+
+        .perfect-match-section.empty {
+            display: none;
+        }
+
         /* Chat Page */
         .chat-container {
             max-width: 500px;
@@ -1668,6 +1707,10 @@
                 <input type="file" id="avatar-upload" class="avatar-upload-input" accept="image/*" onchange="handleAvatarUpload(event)">
             </div>
             <input type="text" id="profile-name" class="profile-name-input" placeholder="Your Name" value="">
+            <div class="perfect-match-section empty" id="perfect-match-section">
+                <p class="perfect-match-label">My perfect match</p>
+                <img id="profile-perfect-match-img" class="profile-perfect-match-img" src="" alt="Your perfect match drawing">
+            </div>
             <div class="user-stats">
                 <div class="stat-row">
                     <span class="stat-label">Party</span>
@@ -1755,6 +1798,7 @@
                     <button class="canvas-btn" onclick="undoCanvas()">↩ Undo</button>
                     <button class="canvas-btn" onclick="redoCanvas()">↪ Redo</button>
                     <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear</button>
+                    <button class="canvas-btn canvas-btn-save" onclick="savePerfectMatchToProfile()">💾 Save to profile</button>
                 </div>
             </div>
         </div>
@@ -1908,7 +1952,8 @@
             birthday: null,
             viewingOtherSide: false,
             matches: [],
-            red40Maxxing: false
+            red40Maxxing: false,
+            perfectMatchImage: null
         };
 
         // Sample profiles for feed
@@ -2237,6 +2282,23 @@
                 avatar.src = 'biden_face_crop.png';
             } else if (userData.party === 'republican') {
                 avatar.src = 'licensed-image.jpeg';
+            } else {
+                avatar.src = '';
+            }
+
+            // Perfect match image
+            const perfectMatchSection = document.getElementById('perfect-match-section');
+            const perfectMatchImg = document.getElementById('profile-perfect-match-img');
+            if (perfectMatchSection && perfectMatchImg) {
+                if (userData.perfectMatchImage) {
+                    perfectMatchSection.classList.remove('empty');
+                    perfectMatchImg.src = userData.perfectMatchImage;
+                    perfectMatchImg.style.display = 'block';
+                } else {
+                    perfectMatchSection.classList.add('empty');
+                    perfectMatchImg.src = '';
+                    perfectMatchImg.style.display = 'none';
+                }
             }
 
             // Set profile page background based on party
@@ -2447,6 +2509,14 @@
             matchCtx.clearRect(0, 0, matchCanvas.width, matchCanvas.height);
             canvasUndoStack = [];
             canvasRedoStack = [];
+        }
+
+        function savePerfectMatchToProfile() {
+            if (!matchCanvas || !matchCtx) return;
+            const png = matchCanvas.toDataURL('image/png');
+            userData.perfectMatchImage = png;
+            updateProfilePage();
+            goToPage('profile');
         }
 
         function updateCreateMatchPage() {
