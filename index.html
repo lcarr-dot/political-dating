@@ -1020,6 +1020,17 @@
             flex-wrap: wrap;
         }
 
+        .canvas-tool-btn.canvas-tool-active {
+            background: var(--gold);
+            color: var(--charcoal);
+            border-color: var(--gold);
+        }
+
+        .canvas-tool-btn.canvas-tool-active:hover {
+            background: #e6c22a;
+            color: var(--charcoal);
+        }
+
         .canvas-btn-save {
             background: linear-gradient(135deg, #2d5016, #1a3309);
             border-color: #4a7c23;
@@ -1842,6 +1853,8 @@
                     <span class="canvas-slider-value" id="brush-opacity-value">100%</span>
                 </div>
                 <div class="canvas-toolbar-row">
+                    <button class="canvas-btn canvas-tool-btn canvas-tool-active" id="canvas-tool-brush" onclick="setCanvasTool('brush')">✏️ Brush</button>
+                    <button class="canvas-btn canvas-tool-btn" id="canvas-tool-fill" onclick="setCanvasTool('fill')">🪣 Fill</button>
                     <button class="canvas-btn" onclick="undoCanvas()">↩ Undo</button>
                     <button class="canvas-btn" onclick="redoCanvas()">↪ Redo</button>
                     <button class="canvas-btn" onclick="clearCanvas()">🧼 Clear</button>
@@ -2431,6 +2444,75 @@
         ];
 
         let selectedStampChar = null;
+        let canvasTool = 'brush';
+
+        function setCanvasTool(tool) {
+            canvasTool = tool;
+            const brushBtn = document.getElementById('canvas-tool-brush');
+            const fillBtn = document.getElementById('canvas-tool-fill');
+            if (brushBtn) brushBtn.classList.toggle('canvas-tool-active', tool === 'brush');
+            if (fillBtn) fillBtn.classList.toggle('canvas-tool-active', tool === 'fill');
+        }
+
+        function floodFillCanvas(px, py) {
+            if (!matchCanvas || !matchCtx) return;
+            const w = matchCanvas.width;
+            const h = matchCanvas.height;
+            if (px < 0 || px >= w || py < 0 || py >= h) return;
+
+            const imageData = matchCtx.getImageData(0, 0, w, h);
+            const data = imageData.data;
+            const idx0 = (py * w + px) << 2;
+            const targetR = data[idx0];
+            const targetG = data[idx0 + 1];
+            const targetB = data[idx0 + 2];
+            const targetA = data[idx0 + 3];
+
+            const hex = document.querySelector('.canvas-swatch.selected') ? document.querySelector('.canvas-swatch.selected').getAttribute('data-color') : '#1a1a1a';
+            const n = parseInt(hex.slice(1), 16);
+            const fillR = (n >> 16) & 255;
+            const fillG = (n >> 8) & 255;
+            const fillB = n & 255;
+            const opacity = document.getElementById('brush-opacity-slider') ? parseInt(document.getElementById('brush-opacity-slider').value, 10) / 100 : 1;
+            const fillA = Math.round(opacity * 255);
+
+            const tol = 32;
+            const match = (i) =>
+                Math.abs(data[i] - targetR) <= tol &&
+                Math.abs(data[i + 1] - targetG) <= tol &&
+                Math.abs(data[i + 2] - targetB) <= tol &&
+                Math.abs(data[i + 3] - targetA) <= tol;
+
+            if (Math.abs(fillR - targetR) <= tol && Math.abs(fillG - targetG) <= tol && Math.abs(fillB - targetB) <= tol) return;
+
+            canvasUndoStack.push(saveCanvasState());
+            if (canvasUndoStack.length > MAX_UNDO) canvasUndoStack.shift();
+            canvasRedoStack = [];
+
+            const stack = [[px, py]];
+            const seen = new Set();
+            seen.add(px + py * w);
+
+            while (stack.length) {
+                const [cx, cy] = stack.pop();
+                const i = (cy * w + cx) << 2;
+                if (!match(i)) continue;
+                data[i] = fillR;
+                data[i + 1] = fillG;
+                data[i + 2] = fillB;
+                data[i + 3] = fillA;
+                const next = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]];
+                for (const [nx, ny] of next) {
+                    if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+                    const key = nx + ny * w;
+                    if (seen.has(key)) continue;
+                    seen.add(key);
+                    stack.push([nx, ny]);
+                }
+            }
+
+            matchCtx.putImageData(imageData, 0, 0);
+        }
 
         function drawStampOnCanvas(x, y, char) {
             if (!matchCtx || !char) return;
@@ -2592,6 +2674,10 @@
                 const rect = matchCanvas.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
+                if (canvasTool === 'fill') {
+                    floodFillCanvas(Math.floor(x), Math.floor(y));
+                    return;
+                }
                 if (selectedStampChar) {
                     placeStampOnCanvas(x, y, selectedStampChar);
                     selectedStampChar = null;
@@ -2612,6 +2698,10 @@
                 const touch = e.touches[0];
                 const x = touch.clientX - rect.left;
                 const y = touch.clientY - rect.top;
+                if (canvasTool === 'fill') {
+                    floodFillCanvas(Math.floor(x), Math.floor(y));
+                    return;
+                }
                 if (selectedStampChar) {
                     placeStampOnCanvas(x, y, selectedStampChar);
                     selectedStampChar = null;
